@@ -50,10 +50,23 @@ node ferramentas/verificar.mjs decks/meu-deck.html
 # exportar um PNG por slide
 node ferramentas/exportar.mjs decks/meu-deck.html
 node ferramentas/exportar.mjs decks/meu-deck.html --formato=post
+
+# juntar tudo em um HTML só, para enviar a alguém
+node ferramentas/empacotar.mjs decks/meu-deck.html
 ```
 
 As ferramentas pedem Node 18 ou mais novo e o Edge ou o Chrome instalado. Os decks em si não
 pedem nada.
+
+## Compartilhar
+
+| A pessoa vai | Envie |
+|---|---|
+| Ver com animação e navegar | O HTML único de `ferramentas/empacotar.mjs`; abre em qualquer navegador |
+| Só ler | PDF: `Ctrl+P` no deck, margens "Nenhuma", gráficos de plano de fundo ligados |
+| Postar | Os PNGs de `ferramentas/exportar.mjs` |
+
+O HTML único busca as fontes na internet; sem rede ele abre com as fontes do sistema.
 
 ## Estático ou animado
 

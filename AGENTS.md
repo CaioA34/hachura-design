@@ -32,6 +32,7 @@ README.md                 apresentação do repositório para pessoas
 docs/readme/              imagens do README, exportadas dos decks
 ferramentas/
   exportar.mjs            um PNG por slide
+  empacotar.mjs           deck em um arquivo HTML único, para enviar a alguém
   verificar.mjs           testes automáticos de um deck
   navegador.mjs           código comum das duas ferramentas
 export/                   saída do exportar (fora do git)
@@ -155,5 +156,9 @@ O hook em `.githooks/commit-msg` recusa mensagens fora do padrão. Em um clone n
 node ferramentas/verificar.mjs decks/<nome>.html     navegação, ícones, proporção, transbordo
 node ferramentas/exportar.mjs decks/<nome>.html      um PNG por slide, para olhar
 ```
+
+Para enviar um deck a alguém sem o repositório, `node ferramentas/empacotar.mjs decks/<nome>.html`
+gera `export/<nome>.html`, um arquivo único com estilo, script e ícones embutidos. Nunca edite
+o arquivo empacotado: edite o deck e empacote de novo.
 
 Diga o que você conferiu de fato (rodou a verificação, olhou as imagens) e o que não conferiu.
