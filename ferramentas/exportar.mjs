@@ -28,7 +28,7 @@ if (!total) {
 }
 
 const flagFormato = flags.find((f) => f.startsWith('--formato='));
-const formato = flagFormato ? flagFormato.split('=')[1] : /data-format="post"/.test(html) ? 'post' : 'slide';
+const formato = flagFormato ? flagFormato.split('=')[1] : /<main\b[^>]*\bdata-format="post"/.test(html) ? 'post' : 'slide';
 if (formato !== 'slide' && formato !== 'post') {
   console.error('Formato desconhecido: ' + formato + ' (use slide ou post)');
   process.exit(1);
