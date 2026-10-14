@@ -1,7 +1,7 @@
 // Confere um deck depois de qualquer mudança no sistema ou no conteúdo.
 // Uso: node ferramentas/verificar.mjs [deck.html]      (padrão: decks/modelo-base.html)
 // Checa: biblioteca de ícones válida; nos dois formatos, navegação, ícones desenhados,
-// proporção do slide e nenhum conteúdo transbordando; e que as animações terminam.
+// proporção do slide, nenhum conteúdo transbordando e animações que terminam com tudo visível.
 // Sai com código 1 se algo falhar.
 
 import { spawnSync } from 'node:child_process';
@@ -34,14 +34,24 @@ const probe = `<script>
   var box = slides[0].getBoundingClientRect(); r.ratio = box.width / box.height;
   r.steps = document.querySelectorAll('.step').length;
   r.motion = document.documentElement.classList.contains('motion');
-  setTimeout(function () {
-    r.running = document.getAnimations().length;
+  // Espera as fontes (mudam a largura do texto) antes de medir.
+  function measure() {
+    // Animação: nenhuma pode ser infinita e, terminadas, nada do slide pode ficar invisível.
+    // finish() leva cada uma ao fim na hora, sem depender do relógio.
+    var animations = document.getAnimations();
+    r.endless = animations.filter(function (a) { return !isFinite(a.effect.getComputedTiming().endTime); }).length;
+    animations.forEach(function (a) { if (isFinite(a.effect.getComputedTiming().endTime)) a.finish(); });
+    r.hidden = [].filter.call(document.querySelectorAll('.slide.is-active :is(.text > *, .art > *, .takeaway)'), function (x) {
+      return !x.matches('.step:not(.shown)') && getComputedStyle(x).opacity !== '1';
+    }).length;
     r.overflow = slides.filter(function (s) {
       s.classList.add('is-active');
       return s.scrollHeight > s.clientHeight + 1 || s.scrollWidth > s.clientWidth + 1;
     }).map(function (s) { return Number(s.id); });
     document.body.setAttribute('data-probe', encodeURIComponent(JSON.stringify(r)));
-  }, 9000);
+  }
+  var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  fonts.then(function () { setTimeout(measure, 300); });
 })();
 </script>
 </body>`;
@@ -63,7 +73,9 @@ try {
     report(r.missingIcons.length === 0, `${formato}: ícones` + (r.missingIcons.length ? ' sem desenho: ' + r.missingIcons.join(', ') : ' todos desenhados'));
     report(Math.abs(r.ratio - ratio) < 0.01, `${formato}: proporção ${r.ratio.toFixed(3)}`);
     report(r.overflow.length === 0, `${formato}: transbordo` + (r.overflow.length ? ' nos slides ' + r.overflow.join(', ') : ' em nenhum slide'));
-    report(r.running === 0, `${formato}: animações terminam` + (r.motion ? '' : ' (animação desligada neste deck)') + (r.steps ? `; ${r.steps} elementos com .step` : ''));
+    report(r.endless === 0 && r.hidden === 0, `${formato}: animações terminam e deixam o slide visível` +
+      (r.endless ? ` (${r.endless} sem fim)` : '') + (r.hidden ? ` (${r.hidden} elementos invisíveis)` : '') +
+      (r.motion ? '' : ' (animação desligada neste deck)') + (r.steps ? `; ${r.steps} elementos com .step` : ''));
   }
 } finally {
   fs.rmSync(copy, { force: true });
