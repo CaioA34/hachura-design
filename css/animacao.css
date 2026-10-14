@@ -1,0 +1,48 @@
+/* Animação: só entrada, só no modo apresentação. Todos os tempos são multiplicados por --tempo (tokens.css). */
+
+/* ---------- animação: só no modo apresentação, sutil, e respeitando "reduzir movimento" ---------- */
+/* Regra da casa: só entrada (aparecer, subir um pouco, crescer). Nada gira, quica ou pisca. */
+@keyframes rise{from{opacity:0;transform:translateY(calc(var(--u)*.8))}}
+@keyframes fade{from{opacity:0}}
+@keyframes grow-x{from{transform:scaleX(0)}}
+@keyframes grow-y{from{transform:scaleY(0)}}
+@keyframes grow-h{from{height:0}}
+
+@media screen and (min-aspect-ratio:1001/1000) and (min-width:701px) and (prefers-reduced-motion:no-preference){
+  .motion{--ease:cubic-bezier(.2,.7,.2,1)}
+
+  /* moldura e blocos: texto, depois o diagrama, por último a conclusão */
+  .motion .is-active .text>*{animation:rise calc(.5s*var(--tempo)) var(--ease) backwards}
+  .motion .is-active .text>:nth-child(2){animation-delay:calc(.07s*var(--tempo))}
+  .motion .is-active .text>:nth-child(n+3){animation-delay:calc(.14s*var(--tempo))}
+  .motion .is-active .art>*{animation:rise calc(.5s*var(--tempo)) var(--ease) calc(.2s*var(--tempo)) backwards}
+  .motion .is-active .art>:nth-child(2){animation-delay:calc(.28s*var(--tempo))}
+  .motion .is-active .art>:nth-child(n+3){animation-delay:calc(.36s*var(--tempo))}
+  .motion .is-active .takeaway{animation:fade calc(.6s*var(--tempo)) ease calc(.6s*var(--tempo)) backwards}
+  .motion .is-active .progress .now{transform-origin:left;animation:grow-x calc(.5s*var(--tempo)) var(--ease) backwards}
+
+  /* listas: cada item entra na sua vez (--i vem do script) */
+  .motion .is-active .art>:is(.flow,.timeline,.pair){animation:none}
+  .motion .is-active :is(.flow,.timeline)>:is(.node,.event),
+  .motion .is-active .pair>.card,
+  .motion .is-active .steps>li{animation:rise calc(.45s*var(--tempo)) var(--ease) backwards;animation-delay:calc(calc(.2s*var(--tempo)) + var(--i,0)*calc(.09s*var(--tempo)))}
+  .motion .is-active :is(.flow,.timeline)>.link{transform-origin:left;animation:grow-x calc(.35s*var(--tempo)) ease backwards;animation-delay:calc(calc(.2s*var(--tempo)) + var(--i,0)*calc(.09s*var(--tempo)))}
+  .motion .is-active .flow.down>.link{transform-origin:top;animation-name:grow-y}
+  .motion .is-active .link[data-label]{animation-name:fade}
+  .motion .is-active .fork{animation:fade calc(.4s*var(--tempo)) ease calc(.45s*var(--tempo)) backwards}
+  .motion .is-active .fork~.pair>.card{animation-delay:calc(calc(.6s*var(--tempo)) + var(--i,0)*calc(.09s*var(--tempo)))}
+
+  /* dados: barras e colunas crescem, células e linhas de terminal aparecem em sequência */
+  .motion .is-active .track i{transform-origin:left;animation:grow-x calc(.7s*var(--tempo)) var(--ease) calc(.4s*var(--tempo)) backwards}
+  .motion .is-active .cols i{animation:grow-h calc(.7s*var(--tempo)) var(--ease) backwards;animation-delay:calc(calc(.35s*var(--tempo)) + var(--i,0)*calc(.07s*var(--tempo)))}
+  .motion .is-active .cells i{animation:fade calc(.3s*var(--tempo)) ease backwards;animation-delay:calc(calc(.35s*var(--tempo)) + var(--i,0)*calc(5ms*var(--tempo)))}
+  .motion .is-active .term .ln{animation:fade calc(.3s*var(--tempo)) ease backwards;animation-delay:calc(calc(.4s*var(--tempo)) + var(--i,0)*calc(.22s*var(--tempo)))}
+
+  /* passos: um elemento com .step só aparece quando a pessoa avança */
+  .motion .is-active .step:not(.shown){opacity:0;animation:none}
+  .motion .is-active .step.shown{animation:rise calc(.4s*var(--tempo)) var(--ease)}
+}
+
+/* ---------- slide estático: data-motion="off" na <section> ---------- */
+.slide[data-motion="off"] *,.slide[data-motion="off"] *::before,.slide[data-motion="off"] *::after{animation:none!important}
+.slide[data-motion="off"] .step{opacity:1!important}

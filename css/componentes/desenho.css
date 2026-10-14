@@ -1,0 +1,15 @@
+/* Desenho livre em SVG: classes para linhas, caixas, hachura e texto. */
+
+svg.d{display:block;width:100%;height:auto;overflow:visible}
+.d .ln{fill:none;stroke:var(--text);stroke-width:2}
+.d .ln.mute{stroke:var(--text-3)}
+.d .ln.accent{stroke:var(--accent)}
+.d .ln.alert{stroke:var(--alert)}
+.d .dash{stroke-dasharray:5 5}
+.d .box{fill:var(--surface);stroke:var(--line-2);stroke-width:1}
+.d .hatch{fill:url(#hatch)}
+.d .hatch.accent{fill:url(#hatch-accent)}
+.d .hatch.alert{fill:url(#hatch-alert)}
+.d text{font-family:var(--mono);font-size:14px;fill:var(--text-2)}
+.d text.mute{fill:var(--text-3)}
+.d text.strong{fill:var(--text);font-weight:600}

@@ -1,0 +1,93 @@
+/* Base: reset, palco, moldura do slide (faixa do topo, texto, diagrama, conclusão, progresso)
+   e peças usadas por todos os componentes (.label, .card, .px, .hatch). */
+
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* ---------- palco e moldura ---------- */
+.deck{display:grid;place-items:center;min-height:100vh}
+.slide{
+  position:relative;overflow:hidden;
+  width:calc(var(--u)*100);height:calc(var(--u)*56.25);
+  padding:calc(var(--u)*3) calc(var(--u)*4.4) calc(var(--u)*3.8);
+  display:grid;column-gap:calc(var(--u)*4);
+  grid-template-columns:5fr 6fr;
+  grid-template-rows:auto 1fr auto;
+  grid-template-areas:"top top" "text art" "foot foot";
+}
+.slide.cover{grid-template-columns:6fr 5fr}
+.slide.stack{
+  grid-template-rows:auto auto 1fr auto;
+  grid-template-areas:"top top" "text text" "art art" "foot foot";
+}
+
+.top{
+  grid-area:top;display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:calc(var(--u)*1.4);border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-3);
+}
+.top b{color:var(--text);font-weight:500}
+.brand::before{
+  content:"";display:inline-block;width:calc(var(--u)*.8);height:calc(var(--u)*.8);
+  margin-right:calc(var(--u)*.8);background:var(--accent);
+}
+
+.text{grid-area:text;align-self:center;display:flex;flex-direction:column;gap:calc(var(--u)*1.6);min-width:0}
+.stack .text{align-self:start;padding-top:calc(var(--u)*2.6)}
+h1,h2{margin:0;font-weight:700;letter-spacing:-.045em;line-height:1.03;text-wrap:balance}
+h1{font-size:var(--fs-hero)}
+h2{font-size:var(--fs-title)}
+.sub{margin:0;max-width:34ch;font-size:var(--fs-sub);line-height:1.35;letter-spacing:-.01em;color:var(--text-2);text-wrap:pretty}
+.stack .sub{max-width:60ch}
+
+.art{grid-area:art;align-self:center;margin:0;min-width:0;display:flex;flex-direction:column;gap:calc(var(--u)*1.2)}
+.stack .art{align-self:stretch;padding:calc(var(--u)*2.4) 0 calc(var(--u)*2.6)}
+.stack .art>.pair,.stack .art>.timeline,.stack .art>.quote{flex:1}
+
+.takeaway{
+  grid-area:foot;margin:0;padding-top:calc(var(--u)*1.6);border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:calc(var(--u)*3);
+  font-size:var(--fs-strong);font-weight:600;letter-spacing:-.02em;line-height:1.25;
+}
+.takeaway::after{content:"\2192";font-family:var(--mono);font-weight:400;color:var(--text-3)}
+
+.progress{
+  position:absolute;left:calc(var(--u)*4.4);right:calc(var(--u)*4.4);bottom:calc(var(--u)*1.6);
+  display:flex;gap:calc(var(--u)*.4);
+}
+.progress i{flex:1;height:2px;background:var(--line)}
+.progress i.on{background:var(--text-3)}
+.progress i.now{background:var(--text)}
+
+/* ---------- peças básicas ---------- */
+.label{font-family:var(--mono);font-size:var(--fs-mono);letter-spacing:.02em;color:var(--text-3)}
+.t-accent{color:var(--accent)}
+.t-alert{color:var(--alert)}
+
+.card{
+  min-width:0;padding:calc(var(--u)*1.8);
+  background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--u)*1.1);
+}
+.card.focus{border-color:var(--line-3)}
+.card.accent{border-color:var(--accent)}
+.card.alert{border:1px dashed var(--alert)}
+.card strong{display:block;font-size:var(--fs-strong);font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.card p{margin:calc(var(--u)*.5) 0 0;font-size:var(--fs-body);line-height:1.4;color:var(--text-2)}
+
+.px{display:inline-flex;vertical-align:middle;--i:var(--icon)}
+.px.lg{--i:calc(var(--icon)*1.8)}
+.px.xl{--i:calc(var(--icon)*5)}
+.px svg{display:block;height:var(--i);width:auto}
+
+.hatch{background-image:repeating-linear-gradient(135deg,var(--hc,var(--text-3)) 0 1.5px,transparent 1.5px 6px)}
+.hatch.accent{--hc:var(--accent)}
+.hatch.alert{--hc:var(--alert)}
+
+/* ---------- apresentação: um slide por vez ---------- */
+@media screen and (min-aspect-ratio:1001/1000) and (min-width:701px){
+  .js body{overflow:hidden}
+  .js .slide:not(.is-active){display:none}
+  .js .deck{cursor:default;user-select:none}
+}

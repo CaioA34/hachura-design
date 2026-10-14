@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelo-base de slides</title>
+<!--
+GUIA PARA QUEM FOR PREENCHER (pessoa ou IA)
+
+1. Arquivos
+   - decks/modelo-base.html: este exemplo, com todos os tipos de slide e componentes.
+     Deck novo: copie este arquivo dentro de decks/ e troque o conteúdo.
+   - sistema.css e sistema.js (na raiz): estilo e comportamento, compartilhados.
+     Não cole o conteúdo deles dentro do deck.
+   - icons/icons.js: os ícones, gerados de icons/icons.json.
+   - AGENTS.md (na raiz): mapa do repositório e como acrescentar componentes.
+
+2. Configuração, em <main class="deck">
+   - data-brand e data-section: textos da faixa do topo. Um slide troca a seção com data-section.
+   - data-format="post": carrossel 4:5 (1080×1350). Sem o atributo, slide 16:9.
+     O mesmo slide serve nos dois formatos; ?formato=post no endereço mostra a versão 4:5.
+   - Cores e fontes: variáveis em css/tokens.css.
+   - NÃO escreva faixa do topo, contador nem barra de progresso: o script gera tudo.
+
+3. Esqueleto de um slide
+   <section class="slide [cover|stack|closing]">
+     <div class="text"> <h2>Título</h2> <p class="sub">Subtítulo</p> </div>
+     <figure class="art"> ...um componente... </figure>
+     <p class="takeaway">Frase de conclusão (opcional)</p>
+   </section>
+   - Sem modificador: texto à esquerda, diagrama à direita (no 4:5, texto em cima).
+   - .cover: capa (use <h1>).  .stack: título em cima, conteúdo em largura total.
+   - .closing: encerramento (use <h1> e <span class="dot">.</span>).
+   - <span class="kicker">: linha de apoio em maiúsculas, no lugar do subtítulo.
+
+4. Componentes para dentro de .art
+   Caixas e fluxo
+     .flow > .node + .link                 caixas ligadas na horizontal
+     .flow.down                            as mesmas caixas, empilhadas
+     .link aceita .dashed .mute .broken .arrow .long e data-label="texto na ligação"
+     .ask + .fork (dois <span> com os rótulos) + .pair      bifurcação sim/não
+   Dados
+     .bars > .label + .track > i[style=--v:0..100] + b      barras horizontais
+     .cols > i[style=--v:0..100 data-value data-label]      colunas; aceita .hatch .accent .alert
+       i.stack[style=--v:80;--base:30]     coluna de duas séries (base sólida + hachura)
+     .legend > span > i + texto            legenda das séries
+     table.table                           th, td; .num alinha à direita; <small> é a 2ª linha
+     .cells[data-cols data-rows data-on data-hot data-alert]   grade de células
+       data-on: quantas cheias desde a primeira; data-hot e data-alert: posições, "3,18,40"
+     .stat > .label + b                    número grande; .stats empilha; .side põe ao lado
+   Texto e código
+     .pair > .card + .card                 comparação (use .stack no slide)
+     .timeline > .event + .link.dashed     linha do tempo (use .stack)
+     blockquote.quote > p + cite           citação (use .stack)
+     ol.steps > li                         resumo numerado, 3 ou 4 itens
+     pre.code                              <em> palavra-chave, <b> valor, <s> comentário
+     pre.code.term                         <u> é a linha digitada; o resto é a saída
+     data-tag="texto" em pre.code          etiqueta no canto do bloco
+   Desenho livre
+     svg.d                                 classes .ln .dash .box .hatch e <text>; viewBox até 480 de largura
+   Modificadores de cor: .focus (borda clara), .accent (destaque), .alert (problema).
+
+5. Ícones em pixel
+   <i class="px" data-icon="nome"></i>   tamanhos .lg e .xl; .no risca o ícone ("não faça")
+   São 74. Veja os nomes em icons/README.md ou os desenhos em icons/preview.html.
+   Para criar um, edite icons/icons.json e rode: node icons/build.mjs
+
+6. Regras de estilo
+   - Uma ideia por slide; título com até 8 palavras; subtítulo com até 2 linhas.
+   - Cor só com significado: --accent para destaque/solução, --alert para problema.
+   - Rótulos de diagrama em minúsculas, com a classe .label.
+
+7. Animação (só ao apresentar; imagem, PDF e celular mostram o slide pronto)
+   - A entrada é automática: texto, depois o diagrama, depois a conclusão. Barras e colunas
+     crescem; itens de lista, células e linhas de terminal aparecem em sequência.
+   - class="step" em qualquer elemento: ele só aparece quando a pessoa avança. Use com
+     moderação, para revelar uma resposta ou os itens de um resumo.
+   - Slide estático: data-motion="off" em <main class="deck"> desliga o deck inteiro;
+     na <section> desliga só aquele slide; ?animacao=off no endereço desliga na hora.
+   - Velocidade: --tempo em css/tokens.css (1 = rápido, 2 = calmo, 3 = lento).
+   - Não crie animações novas dentro de um deck; se faltar uma, ela entra em css/animacao.css.
+
+8. Uso
+   - Setas, espaço ou clique para navegar; F para tela cheia; #3 no endereço abre o slide 3.
+   - Em tela estreita ou em pé, os slides viram uma página rolável.
+   - Imagens: node ferramentas/exportar.mjs decks/deck.html [pasta] [--formato=post]
+   - Conferir: node ferramentas/verificar.mjs decks/deck.html
+   - PDF: Ctrl+P, destino "Salvar como PDF", margens "Nenhuma", gráficos de plano de fundo ligados.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../sistema.css">
+</head>
+<body>
+
+<!-- padrões de hachura para os diagramas em SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" style="fill:var(--text-3)"/>
+    </pattern>
+    <pattern id="hatch-accent" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" style="fill:var(--accent)"/>
+    </pattern>
+    <pattern id="hatch-alert" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" style="fill:var(--alert)"/>
+    </pattern>
+  </defs>
+</svg>
+
+<main class="deck" data-brand="Seu nome" data-section="Modelo-base">
+
+  <!-- CAPA -->
+  <section class="slide cover">
+    <div class="text">
+      <h1>Uma ideia por slide, nada sobrando</h1>
+      <p class="sub">Modelo-base em HTML: sete tipos de slide, uma moldura fixa e ícones em pixel.</p>
+    </div>
+    <figure class="art">
+      <span class="label">como funciona</span>
+      <div class="flow">
+        <div class="node card"><i class="px lg" data-icon="doc"></i><span class="label">conteúdo</span></div>
+        <span class="link"></span>
+        <div class="node card focus"><i class="px lg" data-icon="code"></i><span class="label">modelo</span></div>
+        <span class="link dashed"></span>
+        <div class="node card"><i class="px lg" data-icon="play"></i><span class="label">slides</span></div>
+      </div>
+    </figure>
+  </section>
+
+  <!-- CONTEÚDO COM DIAGRAMA DE CAIXAS -->
+  <section class="slide">
+    <div class="text">
+      <h2>Conteúdo com diagrama</h2>
+      <p class="sub">Texto à esquerda, um diagrama à direita e a conclusão no rodapé.</p>
+    </div>
+    <figure class="art">
+      <span class="label">com canal</span>
+      <div class="flow">
+        <div class="node card"><i class="px lg" data-icon="person"></i><span class="label">time a</span></div>
+        <span class="link"></span>
+        <div class="node card"><i class="px lg" data-icon="person"></i><span class="label">time b</span></div>
+      </div>
+      <span class="label">sem canal</span>
+      <div class="flow">
+        <div class="node card"><i class="px lg" data-icon="person"></i><span class="label">time a</span></div>
+        <span class="link broken"></span>
+        <div class="node card alert"><i class="px lg t-alert" data-icon="question"></i><span class="label">time c</span></div>
+      </div>
+    </figure>
+    <p class="takeaway">A frase do rodapé entrega a conclusão do slide.</p>
+  </section>
+
+  <!-- CONTEÚDO COM BARRAS -->
+  <section class="slide">
+    <div class="text">
+      <h2>Barras para comparar números</h2>
+      <p class="sub">A cor de alerta marca o problema; a de destaque, a solução.</p>
+    </div>
+    <figure class="art">
+      <span class="label">tempo de resposta</span>
+      <div class="bars">
+        <span class="label">sem cache</span><span class="track"><i class="alert" style="--v:92"></i></span><b>920 ms</b>
+        <span class="label">com cache</span><span class="track"><i class="accent" style="--v:14"></i></span><b>140 ms</b>
+        <span class="label">meta</span><span class="track"><i style="--v:20"></i></span><b>200 ms</b>
+      </div>
+    </figure>
+    <p class="takeaway">Três barras bastam. Mais que isso, vira tabela.</p>
+  </section>
+
+  <!-- CONTEÚDO COM DIAGRAMA LIVRE EM SVG -->
+  <section class="slide">
+    <div class="text">
+      <h2>Diagrama livre em SVG</h2>
+      <p class="sub">Quando caixas e barras não bastam, desenhe com linhas e hachura.</p>
+    </div>
+    <figure class="art">
+      <svg class="d" viewBox="0 0 480 240" role="img" aria-label="Degrau: custo sobe e depois se mantém">
+        <rect class="hatch" x="140" y="90" width="160" height="110"/>
+        <polyline class="ln" points="0,200 140,200 140,90 480,90"/>
+        <line class="ln accent" x1="300" y1="76" x2="300" y2="210"/>
+        <text class="mute" x="0" y="224">antes</text>
+        <text x="148" y="80">custo</text>
+        <text class="strong" x="312" y="140">ponto de virada</text>
+        <text class="mute" x="312" y="160">daqui em diante</text>
+      </svg>
+    </figure>
+    <p class="takeaway">Traço fino, um preenchimento e uma única cor.</p>
+  </section>
+
+  <!-- FLUXOGRAMA: DECISÃO -->
+  <section class="slide">
+    <div class="text">
+      <h2>Fluxograma de decisão</h2>
+      <p class="sub">Uma pergunta em foco, duas saídas com rótulo.</p>
+    </div>
+    <figure class="art">
+      <div class="card focus ask">cabe em um slide?</div>
+      <div class="fork"><span>sim</span><span>não</span></div>
+      <div class="pair">
+        <div class="card"><strong>Publica</strong><p>Uma ideia, um diagrama.</p></div>
+        <div class="card alert"><strong>Divide</strong><p>Cada parte vira um slide.</p></div>
+      </div>
+    </figure>
+    <p class="takeaway">Decisão simples: uma pergunta e dois caminhos.</p>
+  </section>
+
+  <!-- FLUXOGRAMA: SEQUÊNCIA COM SETAS -->
+  <section class="slide">
+    <div class="text">
+      <h2>Sequência com setas</h2>
+      <p class="sub">Passos empilhados, com o que acontece escrito na seta.</p>
+    </div>
+    <figure class="art">
+      <div class="flow down">
+        <div class="node card"><i class="px" data-icon="pencil"></i><span class="label">rascunho</span></div>
+        <span class="link arrow mute" data-label="revisa"></span>
+        <div class="node card focus"><i class="px" data-icon="search"></i><span class="label">revisado</span></div>
+        <span class="link arrow mute" data-label="exporta em 4:5"></span>
+        <div class="node card"><i class="px t-accent" data-icon="image"></i><span class="label">post publicado</span></div>
+      </div>
+    </figure>
+    <p class="takeaway">O rótulo na seta diz o que muda de um passo para o outro.</p>
+  </section>
+
+  <!-- GRÁFICO DE COLUNAS -->
+  <section class="slide">
+    <div class="text">
+      <h2>Colunas para mostrar crescimento</h2>
+      <p class="sub">Valor no topo, rótulo embaixo, legenda quando há duas séries.</p>
+    </div>
+    <figure class="art">
+      <div class="legend"><span><i class="hatch"></i>retrabalho</span><span><i></i>trabalho</span></div>
+      <div class="cols">
+        <i class="stack" style="--v:28;--base:80" data-value="5 h" data-label="semana 1"></i>
+        <i class="stack" style="--v:45;--base:50" data-value="8 h" data-label="semana 2"></i>
+        <i class="stack" style="--v:68;--base:33" data-value="12 h" data-label="semana 3"></i>
+        <i class="stack" style="--v:100;--base:22" data-value="18 h" data-label="semana 4"></i>
+      </div>
+    </figure>
+    <p class="takeaway">Até seis colunas. A hachura marca a série que você quer destacar.</p>
+  </section>
+
+  <!-- TABELA -->
+  <section class="slide">
+    <div class="text">
+      <h2>Tabela curta</h2>
+      <p class="sub">Para "qual usar quando": poucas linhas, duas ou três colunas.</p>
+    </div>
+    <figure class="art">
+      <table class="table">
+        <thead><tr><th>Precisa</th><th>Use</th><th class="num">Limite</th></tr></thead>
+        <tbody>
+          <tr><td>Comparar números</td><td>barras ou colunas</td><td class="num">6 itens</td></tr>
+          <tr><td>Mostrar um caminho</td><td>fluxograma<small>setas com rótulo</small></td><td class="num">5 passos</td></tr>
+          <tr><td>Cruzar opções</td><td>tabela</td><td class="num">4 linhas</td></tr>
+        </tbody>
+      </table>
+    </figure>
+    <p class="takeaway">Se a tabela pede rolagem, ela pede outro slide.</p>
+  </section>
+
+  <!-- GRADE DE CÉLULAS E NÚMERO GRANDE -->
+  <section class="slide">
+    <div class="text">
+      <h2>Grade de células e número grande</h2>
+      <p class="sub">A grade mostra a proporção; o número dá a medida exata.</p>
+    </div>
+    <figure class="art">
+      <span class="label">100 tarefas</span>
+      <div class="side">
+        <div class="cells" data-cols="10" data-rows="10" data-on="62" data-hot="63" data-alert="99,100"></div>
+        <div class="stats">
+          <div class="stat"><span class="label">concluídas</span><b>62</b></div>
+          <div class="stat alert"><span class="label">com erro</span><b>2</b></div>
+        </div>
+      </div>
+    </figure>
+    <p class="takeaway">Cheia, vazia, em destaque e em alerta: quatro estados bastam.</p>
+  </section>
+
+  <!-- TERMINAL -->
+  <section class="slide">
+    <div class="text">
+      <h2>Terminal</h2>
+      <p class="sub">O que foi digitado fica apagado; a resposta, em destaque.</p>
+    </div>
+    <figure class="art">
+<pre class="code term" data-tag="terminal"><u>node icons/build.mjs --check</u>
+todos os 74 ícones são válidos
+<u>node ferramentas/exportar.mjs decks/modelo-base.html</u>
+16 imagens em export/</pre>
+    </figure>
+    <p class="takeaway">Mostre o comando e a saída que importa, nada mais.</p>
+  </section>
+
+  <!-- COMPARAÇÃO -->
+  <section class="slide stack">
+    <div class="text">
+      <h2>Comparação lado a lado</h2>
+      <p class="sub">O cartão em foco tem borda clara; o lado com problema, borda tracejada.</p>
+    </div>
+    <figure class="art">
+      <div class="pair">
+        <div class="card focus">
+          <div class="row"><span class="label">com plano</span><i class="px lg t-accent" data-icon="check"></i></div>
+          <div><strong>Tem data pra voltar</strong><p>O atalho foi escolhido e tem prazo.</p></div>
+        </div>
+        <div class="card alert">
+          <div class="row"><span class="label t-alert">sem plano</span><i class="px lg t-alert" data-icon="warn"></i></div>
+          <div><strong>Ninguém sabe o tamanho</strong><p>O atalho só aconteceu e ficou.</p></div>
+        </div>
+      </div>
+    </figure>
+    <p class="takeaway">Dois cartões, uma diferença. O resto é igual de propósito.</p>
+  </section>
+
+  <!-- LINHA DO TEMPO -->
+  <section class="slide stack">
+    <div class="text">
+      <h2>Linha do tempo</h2>
+      <p class="sub">Três ou quatro marcos, com o ano em destaque.</p>
+    </div>
+    <figure class="art">
+      <div class="timeline">
+        <div class="event card">
+          <div class="row"><span class="year">2019</span><i class="px lg" data-icon="doc"></i></div>
+          <div><strong>Protótipo</strong><p>Primeira ideia no papel.</p></div>
+        </div>
+        <span class="link dashed"></span>
+        <div class="event card">
+          <div class="row"><span class="year">2022</span><i class="px lg" data-icon="play"></i></div>
+          <div><strong>Versão pública</strong><p>Sai do time e vai pra rua.</p></div>
+        </div>
+        <span class="link dashed"></span>
+        <div class="event card focus">
+          <div class="row"><span class="year">2026</span><i class="px lg t-accent" data-icon="bolt"></i></div>
+          <div><strong>Hoje</strong><p>O marco atual fica em foco.</p></div>
+        </div>
+      </div>
+    </figure>
+  </section>
+
+  <!-- CITAÇÃO -->
+  <section class="slide stack">
+    <div class="text">
+      <h2>Citação</h2>
+    </div>
+    <figure class="art">
+      <blockquote class="quote">
+        <i class="px lg" data-icon="quote" style="color:var(--text-3)"></i>
+        <p>Simples não é ter pouco. É não ter nada sobrando.</p>
+        <cite>Nome de quem disse · Fonte, ano</cite>
+      </blockquote>
+    </figure>
+    <p class="takeaway">Uma frase curta, com a origem logo abaixo.</p>
+  </section>
+
+  <!-- CONTEÚDO COM CÓDIGO -->
+  <section class="slide">
+    <div class="text">
+      <h2>Código também cabe</h2>
+      <p class="sub">Poucas linhas, com destaque só no que importa.</p>
+    </div>
+    <figure class="art">
+      <span class="label">slide.js</span>
+<pre class="code"><s>// uma ideia por slide</s>
+<em>const</em> slide = {
+  titulo: <b>"curto"</b>,
+  diagrama: <b>true</b>,
+  conclusao: <b>"uma frase"</b>,
+};</pre>
+    </figure>
+    <p class="takeaway">Se passar de oito linhas, mostre só o trecho que muda.</p>
+  </section>
+
+  <!-- RESUMO -->
+  <section class="slide">
+    <div class="text">
+      <h2>Resumo em quatro pontos</h2>
+      <span class="kicker">o que lembrar amanhã</span>
+    </div>
+    <figure class="art">
+      <ol class="steps">
+        <li class="step">Uma ideia por slide <i class="px" data-icon="doc"></i></li>
+        <li class="step">Cor só com significado <i class="px t-accent" data-icon="check"></i></li>
+        <li class="step">Diagrama no lugar de texto <i class="px" data-icon="chart-bar"></i></li>
+        <li class="step">Sem enfeite que não explica <i class="px no" data-icon="star"></i></li>
+      </ol>
+    </figure>
+  </section>
+
+  <!-- ENCERRAMENTO -->
+  <section class="slide closing">
+    <div class="text">
+      <h1>Agora é com você<span class="dot">.</span></h1>
+      <p class="sub">Troque as cores, o nome e o conteúdo. A moldura cuida do resto.</p>
+      <span class="signoff">Seu nome · contato</span>
+    </div>
+    <figure class="art">
+      <div class="badge hatch"><i class="px xl" data-icon="bolt"></i></div>
+    </figure>
+  </section>
+
+</main>
+
+<script src="../icons/icons.js"></script>
+<script src="../sistema.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+/* Componentes de texto: comparação, linha do tempo, citação, resumo numerado, linha de apoio e encerramento. */
+
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*2)}
+.pair .card,.event{display:flex;flex-direction:column;justify-content:space-between;gap:calc(var(--u)*2)}
+.event{flex:1 1 0}
+.year{font-family:var(--mono);font-size:calc(var(--u)*3);font-weight:500;letter-spacing:-.03em;line-height:1}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:calc(var(--u)*1.5)}
+
+.quote{
+  margin:0;padding:calc(var(--u)*3);display:flex;flex-direction:column;justify-content:center;
+  gap:calc(var(--u)*2);background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--u)*1.1);
+}
+.quote p{margin:0;max-width:26ch;font-size:calc(var(--fs-title)*.86);font-weight:600;letter-spacing:-.035em;line-height:1.12;text-wrap:balance}
+.quote cite{font-family:var(--mono);font-size:var(--fs-mono);font-style:normal;color:var(--text-3)}
+
+.steps{
+  list-style:none;margin:0;padding:0;counter-reset:s;
+  background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--u)*1.1);
+}
+.steps li{
+  counter-increment:s;display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  gap:calc(var(--u)*2);padding:calc(var(--u)*1.9) calc(var(--u)*2.2);border-top:1px solid var(--line);
+  font-size:var(--fs-strong);font-weight:600;letter-spacing:-.02em;line-height:1.2;
+}
+.steps li:first-child{border-top:0}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-weight:400;color:var(--text-3)}
+.steps .px{color:var(--text-2)}
+
+/* ---------- encerramento ---------- */
+.dot{color:var(--accent)}
+.signoff{font-family:var(--mono);font-size:var(--fs-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-2)}
+.badge{
+  width:62%;aspect-ratio:1;margin:0 auto;display:grid;place-items:center;
+  border:1px solid var(--line);border-radius:calc(var(--u)*1.4);--hc:var(--line);
+}
+
+/* ---------- resumo: linha de apoio e ícone de "não faça" ---------- */
+.kicker{font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.12em;text-transform:uppercase;color:var(--text-3)}
+.px.no{position:relative}
+.px.no::after{
+  content:"";position:absolute;inset:-12%;
+  background:linear-gradient(to top right,transparent calc(50% - 1.5px),var(--alert) calc(50% - 1.5px) calc(50% + 1.5px),transparent calc(50% + 1.5px));
+}

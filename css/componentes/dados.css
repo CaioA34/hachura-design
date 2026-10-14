@@ -1,0 +1,72 @@
+/* Componentes de dados: barras, colunas, legenda, tabela, grade de células e número grande. */
+
+.bars{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:calc(var(--u)*1.2) calc(var(--u)*1.4)}
+.bars b{font-family:var(--mono);font-size:var(--fs-mono);font-weight:500;text-align:right}
+.track{height:calc(var(--u)*1.8);background:var(--surface);border:1px solid var(--line)}
+.track i{
+  display:block;height:100%;width:calc(var(--v,50)*1%);
+  background-image:repeating-linear-gradient(135deg,var(--hc,var(--text)) 0 1.5px,transparent 1.5px 5px);
+}
+.track i.accent{--hc:var(--accent)}
+.track i.alert{--hc:var(--alert)}
+
+/* ---------- gráfico de colunas e legenda ---------- */
+.cols{
+  display:flex;align-items:flex-end;gap:calc(var(--u)*1.6);
+  height:calc(var(--u)*var(--ch,18));padding-top:calc(var(--u)*2.6);margin-bottom:calc(var(--u)*2.6);
+  border-bottom:1px solid var(--line-3);
+}
+.cols i{position:relative;flex:1 1 0;height:calc(var(--v,50)*1%);background-color:var(--hc,var(--text-3))}
+.cols i::before,.cols i::after{
+  position:absolute;left:calc(var(--u)*-1);right:calc(var(--u)*-1);text-align:center;
+  font-family:var(--mono);font-size:var(--fs-mono);font-style:normal;white-space:nowrap;
+}
+.cols i::before{content:attr(data-value);bottom:100%;padding-bottom:calc(var(--u)*.6);font-weight:500;color:var(--text)}
+.cols i::after{content:attr(data-label);top:100%;padding-top:calc(var(--u)*.8);color:var(--text-3)}
+.cols i.accent,.legend i.accent{--hc:var(--accent)}
+.cols i.alert,.legend i.alert{--hc:var(--alert)}
+.cols i.hatch,.legend i.hatch{background-color:transparent}
+.cols i.hatch:not(.accent):not(.alert),.legend i.hatch:not(.accent):not(.alert){--hc:var(--text)}
+.cols i.stack{
+  background-color:transparent;
+  background-image:linear-gradient(var(--text-3),var(--text-3)),repeating-linear-gradient(135deg,var(--text) 0 1.5px,transparent 1.5px 6px);
+  background-size:100% calc(var(--base,30)*1%),auto;background-position:bottom,0 0;background-repeat:no-repeat,repeat;
+}
+.legend{display:flex;flex-wrap:wrap;gap:calc(var(--u)*.8) calc(var(--u)*2);font-family:var(--mono);font-size:var(--fs-mono);color:var(--text-2)}
+.legend span{display:inline-flex;align-items:center;gap:calc(var(--u)*.8)}
+.legend i{width:calc(var(--u)*1.4);height:calc(var(--u)*1.4);background-color:var(--hc,var(--text-3))}
+
+/* ---------- tabela ---------- */
+.table{
+  width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;
+  background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--u)*1.1);
+}
+.table th{
+  padding:calc(var(--u)*1.2) calc(var(--u)*1.8);text-align:left;
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);
+}
+.table td{
+  padding:calc(var(--u)*1.4) calc(var(--u)*1.8);border-top:1px solid var(--line);vertical-align:middle;
+  font-family:var(--mono);font-size:calc(var(--fs-mono)*1.1);line-height:1.35;color:var(--text-2);
+}
+.table td:first-child{font-family:var(--sans);font-size:var(--fs-strong);font-weight:600;letter-spacing:-.02em;line-height:1.2;color:var(--text)}
+.table .num{text-align:right;white-space:nowrap}
+.table small{display:block;font-size:var(--fs-mono);color:var(--text-3)}
+
+/* ---------- grade de células e número grande ---------- */
+.cells{
+  display:grid;grid-template-columns:repeat(var(--n,10),1fr);gap:calc(var(--u)*.3);flex:none;
+  width:min(100%,calc(var(--n,10)*var(--u)*var(--cell,2.2)));
+}
+.cells i{aspect-ratio:1;border:1px solid var(--line-2)}
+.cells i.on{background:var(--text-3);border-color:transparent}
+.cells i.hot{background:var(--text);border-color:transparent}
+.cells i.alert{background:var(--alert);border-color:transparent}
+
+.side{display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--u)*2.6)}
+.stats{display:flex;flex-direction:column;gap:calc(var(--u)*1.6);min-width:0}
+.stat{display:flex;flex-direction:column;gap:calc(var(--u)*.5)}
+.stat b{font-family:var(--mono);font-size:calc(var(--u)*4.4);font-weight:600;letter-spacing:-.03em;line-height:1}
+.stat.accent b{color:var(--accent)}
+.stat.alert b{color:var(--alert)}
+.stat+.stat{padding-top:calc(var(--u)*1.6);border-top:1px solid var(--line)}

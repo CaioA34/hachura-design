@@ -1,0 +1,69 @@
+/* Formatos e saídas: post 4:5, tela estreita (página rolável), ?solo (exportar imagem) e PDF.
+   Vem depois dos componentes porque ajusta o layout deles. */
+
+/* ---------- formato post 4:5: data-format="post" em .deck ---------- */
+:root:has([data-format="post"]){
+  --w:min(1vw,.8vh);
+  --u:calc(var(--w)*1.9);
+  --fs-hero:calc(var(--u)*5.2);
+  --fs-title:calc(var(--u)*3.5);
+}
+[data-format="post"] .slide{
+  width:calc(var(--w)*100);height:calc(var(--w)*125);
+  padding:calc(var(--u)*3) calc(var(--u)*3.4) calc(var(--u)*3.8);
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto 1fr auto;
+  grid-template-areas:"top" "text" "art" "foot";
+}
+[data-format="post"] .text{align-self:start;padding-top:calc(var(--u)*2.4)}
+[data-format="post"] .art{align-self:center;padding:calc(var(--u)*1.5) 0}
+[data-format="post"] .progress{left:calc(var(--u)*3.4);right:calc(var(--u)*3.4)}
+[data-format="post"] .timeline{flex-direction:column}
+[data-format="post"] .timeline .link{flex:0 0 calc(var(--u)*2);width:0;height:calc(var(--u)*2);border-top-width:0;border-left-width:2px}
+[data-format="post"] .event{flex-direction:row;align-items:center;justify-content:flex-start;padding:calc(var(--u)*1.4) calc(var(--u)*1.8)}
+[data-format="post"] .event .row{align-items:center}
+
+/* ---------- tela estreita ou em pé: página rolável ---------- */
+@media screen and (max-aspect-ratio:1/1), screen and (max-width:700px){
+  .deck{display:block;min-height:0}
+  :root:has([data-format="post"]){--w:1vw}
+  :root:not(:has([data-format="post"])){
+    --u:clamp(6px,1.9vw,10px);
+    --fs-hero:clamp(34px,10.5vw,64px);
+    --fs-title:clamp(26px,7.6vw,44px);
+    --fs-sub:clamp(15px,4.3vw,20px);
+    --fs-strong:clamp(16px,4.5vw,20px);
+    --fs-body:15px;
+    --fs-mono:12px;
+    --fs-label:11px;
+    --icon:26px;
+  }
+  .deck:not([data-format="post"]) .slide{
+    width:100%;height:auto;padding:calc(var(--u)*4) calc(var(--u)*3.4) calc(var(--u)*6);
+    grid-template-columns:minmax(0,1fr);grid-template-rows:auto;
+    grid-template-areas:"top" "text" "art" "foot";row-gap:calc(var(--u)*4);
+    border-bottom:1px solid var(--line);
+  }
+  .deck:not([data-format="post"]) .stack .text{padding-top:0}
+  .deck:not([data-format="post"]) .stack .art{padding:0}
+  .deck:not([data-format="post"]) .progress{left:calc(var(--u)*3.4);right:calc(var(--u)*3.4);bottom:calc(var(--u)*2.4)}
+  .deck:not([data-format="post"]) .pair{grid-template-columns:minmax(0,1fr)}
+  .deck:not([data-format="post"]) .timeline{flex-direction:column}
+  .deck:not([data-format="post"]) .timeline .link{flex:0 0 calc(var(--u)*3);width:0;height:calc(var(--u)*3);border-top-width:0;border-left-width:2px}
+  .deck:not([data-format="post"]) .code{white-space:pre-wrap}
+}
+
+/* ---------- ?solo: só o slide atual, para exportar imagem ---------- */
+.solo .slide:not(.is-active){display:none}
+
+/* ---------- PDF: um slide por página ---------- */
+@media print{
+  @page{size:1600px 900px;margin:0}
+  @page post{size:1080px 1350px;margin:0}
+  :root{--w:16px}
+  :root:has([data-format="post"]){--w:10.8px}
+  [data-format="post"] .slide{page:post}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .deck{display:block;min-height:0}
+  .slide{break-after:page;break-inside:avoid}
+}

@@ -1,0 +1,20 @@
+/* Componentes de código: bloco de código e terminal. */
+
+.code{
+  margin:0;padding:calc(var(--u)*2);overflow:hidden;white-space:pre;
+  background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--u)*1.1);
+  font-family:var(--mono);font-size:calc(var(--fs-mono)*1.15);line-height:1.65;color:var(--text-2);
+}
+.code em{font-style:normal;color:var(--accent)}
+.code b{font-weight:500;color:var(--text)}
+.code s{text-decoration:none;color:var(--text-3)}
+
+/* ---------- terminal ---------- */
+.code[data-tag]{position:relative}
+.code[data-tag]::after{
+  content:attr(data-tag);position:absolute;top:calc(var(--u)*1);right:calc(var(--u)*1.4);
+  font-size:var(--fs-label);color:var(--text-3);
+}
+.code.term{color:var(--text)}
+.code.term u{text-decoration:none;color:var(--text-2)}
+.code.term u::before{content:"> ";color:var(--text-3)}

@@ -1,0 +1,34 @@
+/* Tokens: cores, fontes, unidades e velocidade das animações. É o único lugar com valores fixos. */
+
+:root{
+  /* cores */
+  --bg:#0C0C0C;
+  --surface:#121214;
+  --line:#242426;
+  --line-2:#3A3A3D;
+  --line-3:#8A8A8E;
+  --text:#F2F2F2;
+  --text-2:#A3A3A3;
+  --text-3:#6E6E6E;
+  --accent:#8F8CFF;   /* destaque / solução */
+  --alert:#FFB020;    /* problema / atenção */
+
+  /* fontes */
+  --sans:"Geist","Inter Tight","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono","JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+
+  /* --w: 1% da largura do slide que cabe na janela. --u: unidade de todos os tamanhos. */
+  --w:min(1vw,1.7778vh);
+  --u:var(--w);
+  --fs-hero:calc(var(--u)*6.2);
+  --fs-title:calc(var(--u)*4.2);
+  --fs-sub:calc(var(--u)*1.85);
+  --fs-strong:calc(var(--u)*1.9);
+  --fs-body:calc(var(--u)*1.45);
+  --fs-mono:calc(var(--u)*1.2);
+  --fs-label:calc(var(--u)*1.05);
+  --icon:calc(var(--u)*2.6);
+
+  /* velocidade das animações: multiplica todas as durações e esperas. 1 = rápido, 2 = calmo, 3 = lento */
+  --tempo:2.5;
+}
