@@ -16,7 +16,8 @@ GUIA PARA QUEM FOR PREENCHER (pessoa ou IA)
    - fonts/: Geist e Geist Mono. O deck não busca nada na internet.
    - AGENTS.md (na raiz): mapa do repositório e como acrescentar componentes.
 
-2. Configuração, em <main class="deck">
+2. Configuração, nos atributos do elemento main com class="deck"
+   (escrito sem a tag aqui para que só exista uma tag main no arquivo)
    - data-brand e data-section: textos da faixa do topo. Um slide troca a seção com data-section.
    - data-format="post": carrossel 4:5 (1080×1350). Sem o atributo, slide 16:9.
      O mesmo slide serve nos dois formatos; ?formato=post no endereço mostra a versão 4:5.
@@ -76,7 +77,7 @@ GUIA PARA QUEM FOR PREENCHER (pessoa ou IA)
      crescem; itens de lista, células e linhas de terminal aparecem em sequência.
    - class="step" em qualquer elemento: ele só aparece quando a pessoa avança. Use com
      moderação, para revelar uma resposta ou os itens de um resumo.
-   - Slide estático: data-motion="off" em <main class="deck"> desliga o deck inteiro;
+   - Slide estático: data-motion="off" no main do deck desliga o deck inteiro;
      na <section> desliga só aquele slide; ?animacao=off no endereço desliga na hora.
    - Velocidade: --tempo em css/tokens.css (1 = rápido, 2 = calmo, 3 = lento).
    - Não crie animações novas dentro de um deck; se faltar uma, ela entra em css/animacao.css.
