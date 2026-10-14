@@ -1,0 +1,3 @@
+# Finais de linha sempre LF: o hook em .githooks e os arquivos gerados dependem disso.
+* text=auto eol=lf
+*.png binary
