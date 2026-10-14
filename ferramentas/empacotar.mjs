@@ -1,9 +1,9 @@
-// Junta um deck e tudo o que ele carrega (estilo, script, ícones, imagens) em um único HTML,
+// Junta um deck e tudo o que ele carrega (estilo, fontes, script, ícones, imagens) em um único HTML,
 // pronto para enviar a outra pessoa. O arquivo gerado abre em qualquer navegador, com
 // navegação e animações, sem precisar do repositório.
 // Uso: node ferramentas/empacotar.mjs <deck.html> [saida.html]
 //   Sem saída, grava em export/<deck>.html na raiz do repositório.
-// O que continua vindo da internet (por exemplo fontes do Google Fonts) é listado no fim.
+// Se o deck ainda carregar algo da internet, a ferramenta avisa no fim.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -100,7 +100,7 @@ fs.writeFileSync(out, html);
 
 const remote = [...new Set([...html.matchAll(/\b(?:href|src)=["'](https?:\/\/[^"'/]+)/gi)].map((m) => m[1]))];
 console.log(`${out}  (${Math.round(html.length / 1024)} KB, ${inlined.length} arquivos embutidos)`);
-if (remote.length) console.log('Ainda vem da internet: ' + remote.join(', ') + '\n  Sem rede, o deck abre, mas com as fontes do sistema.');
+if (remote.length) console.log('Ainda vem da internet: ' + remote.join(', ') + '\n  Sem rede, essa parte não carrega.');
 if (missing.length) {
   console.error('Não encontrei: ' + missing.join(', '));
   process.exitCode = 1;

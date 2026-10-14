@@ -1,6 +1,7 @@
 /* Ponto de entrada do sistema de design. Cada deck carrega só este arquivo.
-   A ordem importa: tokens, base, componentes, formatos, animação.
+   A ordem importa: fontes, tokens, base, componentes, formatos, animação.
    Componente novo: crie css/componentes/<nome>.css e acrescente a linha aqui, antes de formatos.css. */
+@import "css/fontes.css";
 @import "css/tokens.css";
 @import "css/base.css";
 @import "css/componentes/fluxo.css";
