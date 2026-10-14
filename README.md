@@ -100,6 +100,8 @@ Comece pelo [`AGENTS.md`](AGENTS.md). Ele diz onde fica cada coisa, quais regras
 toda peça e como acrescentar um deck, um componente, um ícone, uma cor, uma animação ou um
 formato sem quebrar o resto.
 
+Para pedir um deck, o prompt pronto está em [`docs/prompt-novo-deck.md`](docs/prompt-novo-deck.md).
+
 ## Contribuir
 
 Commits seguem o [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0-beta.4/),
