@@ -1,6 +1,6 @@
 // Confere um deck depois de qualquer mudança no sistema ou no conteúdo.
 // Uso: node ferramentas/verificar.mjs [deck.html]      (padrão: decks/modelo-base.html)
-// Checa: biblioteca de ícones válida; nos dois formatos, navegação, ícones desenhados,
+// Checa: biblioteca de ícones válida; nos dois formatos, navegação, fontes, ícones desenhados,
 // proporção do slide, nenhum conteúdo transbordando e animações que terminam com tudo visível.
 // Sai com código 1 se algo falhar.
 
@@ -36,6 +36,9 @@ const probe = `<script>
   r.motion = document.documentElement.classList.contains('motion');
   // Espera as fontes (mudam a largura do texto) antes de medir.
   function measure() {
+    r.fonts = Array.from(document.fonts).filter(function (f) { return f.status === 'loaded'; })
+      .map(function (f) { return f.family.replace(/["']/g, ''); })
+      .filter(function (name, i, all) { return all.indexOf(name) === i; });
     // Animação: nenhuma pode ser infinita e, terminadas, nada do slide pode ficar invisível.
     // finish() leva cada uma ao fim na hora, sem depender do relógio.
     var animations = document.getAnimations();
@@ -70,6 +73,7 @@ try {
     if (!match) { report(false, formato + ': a página não respondeu (erro de script ou navegador)'); continue; }
     const r = JSON.parse(decodeURIComponent(match[1]));
     report(r.end === r.total && r.home === 1 && r.visible === 1, `${formato}: navegação (${r.total} slides, um visível por vez)`);
+    report(['Geist', 'Geist Mono'].every((f) => r.fonts.includes(f)), `${formato}: fontes carregadas: ${r.fonts.join(', ') || 'nenhuma'}`);
     report(r.missingIcons.length === 0, `${formato}: ícones` + (r.missingIcons.length ? ' sem desenho: ' + r.missingIcons.join(', ') : ' todos desenhados'));
     report(Math.abs(r.ratio - ratio) < 0.01, `${formato}: proporção ${r.ratio.toFixed(3)}`);
     report(r.overflow.length === 0, `${formato}: transbordo` + (r.overflow.length ? ' nos slides ' + r.overflow.join(', ') : ' em nenhum slide'));
