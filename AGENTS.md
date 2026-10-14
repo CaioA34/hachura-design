@@ -27,6 +27,9 @@ icons/
   README.md               como usar e desenhar ícones
 decks/
   modelo-base.html        catálogo vivo: um slide de exemplo por tipo e por componente
+  readme.html             capa do README (a imagem é exportada para docs/readme/)
+README.md                 apresentação do repositório para pessoas
+docs/readme/              imagens do README, exportadas dos decks
 ferramentas/
   exportar.mjs            um PNG por slide
   verificar.mjs           testes automáticos de um deck
