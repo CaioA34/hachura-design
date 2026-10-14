@@ -1,6 +1,7 @@
 // Confere um deck depois de qualquer mudança no sistema ou no conteúdo.
 // Uso: node ferramentas/verificar.mjs [deck.html]      (padrão: decks/modelo-base.html)
-// Checa: biblioteca de ícones válida; nos dois formatos, navegação, fontes, ícones desenhados,
+// Checa: biblioteca de ícones válida; contraste das cores de texto; nos dois formatos,
+// navegação, fontes, ícones desenhados,
 // proporção do slide, nenhum conteúdo transbordando e animações que terminam com tudo visível.
 // Sai com código 1 se algo falhar.
 
@@ -20,7 +21,25 @@ const report = (ok, text) => { if (!ok) failures++; console.log((ok ? 'ok     ' 
 const build = spawnSync(process.execPath, [path.join(repoRoot, 'icons', 'build.mjs'), '--check'], { encoding: 'utf8' });
 report(build.status === 0, 'ícones: ' + (build.stdout || build.stderr || '').trim().split('\n').pop());
 
-// 2. o deck no navegador, com uma sonda acrescentada a uma cópia temporária
+// 2. contraste (WCAG AA): cada cor de texto sobre o fundo e sobre os cartões
+const tokens = Object.fromEntries([...fs.readFileSync(path.join(repoRoot, 'css', 'tokens.css'), 'utf8')
+  .matchAll(/--([\w-]+):\s*(#[0-9a-f]{6})\b/gi)].map((m) => [m[1], m[2]]));
+const luminance = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + 0.05) / (Math.min(luminance(a), luminance(b)) + 0.05);
+const pairs = ['text', 'text-2', 'text-3', 'accent', 'alert'].flatMap((fg) => ['bg', 'surface'].map((bg) => ({
+  name: `--${fg} sobre --${bg}`, ratio: tokens[fg] && tokens[bg] ? contrast(tokens[fg], tokens[bg]) : 0,
+})));
+const weak = pairs.filter((x) => x.ratio < 4.5);
+const lowest = pairs.reduce((a, b) => (b.ratio < a.ratio ? b : a));
+report(weak.length === 0, weak.length
+  ? 'contraste abaixo de 4,5:1: ' + weak.map((x) => `${x.name} (${x.ratio.toFixed(2)})`).join(', ')
+  : `contraste: todas as cores de texto passam; a menor é ${lowest.name}, ${lowest.ratio.toFixed(2)}:1`);
+
+// 3. o deck no navegador, com uma sonda acrescentada a uma cópia temporária
 const probe = `<script>
 (function () {
   function key(k) { window.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true })); }

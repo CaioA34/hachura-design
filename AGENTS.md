@@ -82,7 +82,9 @@ Nada gira, quica ou pisca.
 Valores em `css/tokens.css`. Use sempre os mesmos:
 
 - Fundo `#0C0C0C`; superfície de cartões `#121214`; bordas `#242426`.
-- Texto `#F2F2F2` (principal), `#A3A3A3` (secundário), `#6E6E6E` (apagado).
+- Texto `#F2F2F2` (principal), `#A3A3A3` (secundário), `#858585` (apagado).
+- Toda cor de texto precisa de contraste de pelo menos 4,5:1 sobre o fundo e sobre os cartões
+  (WCAG AA). O verificador confere isso.
 - Destaque/solução `#8F8CFF`; problema/atenção `#FFB020`. Nenhuma outra cor.
 - Títulos em Geist, peso 700, letras apertadas. Rótulos, código e diagramas em Geist Mono.
   As duas fontes estão em `fonts/`; um deck não carrega nada da internet.
