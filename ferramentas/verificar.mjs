@@ -1,7 +1,7 @@
 // Confere um deck depois de qualquer mudança no sistema ou no conteúdo.
 // Uso: node ferramentas/verificar.mjs [deck.html]      (padrão: decks/modelo-base.html)
 // Checa: biblioteca de ícones válida; contraste das cores de texto; nos dois formatos,
-// navegação, fontes, ícones desenhados,
+// navegação, erros no console, fontes, ícones desenhados,
 // proporção do slide, nenhum conteúdo transbordando e animações que terminam com tudo visível.
 // Sai com código 1 se algo falhar.
 
@@ -87,9 +87,17 @@ const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'deck-verificar-'));
 try {
   for (const [formato, ratio] of [['slide', 16 / 9], ['post', 4 / 5]]) {
     const run = spawnSync(browser, ['--headless=new', '--disable-gpu', '--window-size=1600,1000', '--virtual-time-budget=12000',
-      `--user-data-dir=${profile}`, '--dump-dom', pathToFileURL(copy).href + '?formato=' + formato], { encoding: 'utf8', maxBuffer: 1 << 26 });
+      '--enable-logging=stderr', `--user-data-dir=${profile}`, '--dump-dom', pathToFileURL(copy).href + '?formato=' + formato],
+      { encoding: 'utf8', maxBuffer: 1 << 26 });
+    // Mensagens do console vindas do deck ou do sistema (file://); as das extensões do navegador ficam de fora.
+    const errors = (run.stderr || '').split('\n').filter((line) => /:CONSOLE[(:]/.test(line) && /source: file:/.test(line))
+      .map((line) => line.replace(/^.*?:CONSOLE[^\]]*\]\s*/, '').replace(/, source: file:.*\//, ' em ').trim());
     const match = /data-probe="([^"]*)"/.exec(run.stdout || '');
-    if (!match) { report(false, formato + ': a página não respondeu (erro de script ou navegador)'); continue; }
+    if (!match) {
+      report(false, formato + ': a página não respondeu' + (errors.length ? ': ' + errors.join(' | ') : ' (erro de script ou navegador)'));
+      continue;
+    }
+    report(errors.length === 0, `${formato}: console` + (errors.length ? ' com erros: ' + errors.join(' | ') : ' sem erros'));
     const r = JSON.parse(decodeURIComponent(match[1]));
     report(r.end === r.total && r.home === 1 && r.visible === 1, `${formato}: navegação (${r.total} slides, um visível por vez)`);
     report(['Geist', 'Geist Mono'].every((f) => r.fonts.includes(f)), `${formato}: fontes carregadas: ${r.fonts.join(', ') || 'nenhuma'}`);

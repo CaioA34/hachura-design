@@ -15,6 +15,11 @@
 
   var root = document.documentElement;
   var deck = document.querySelector('.deck');
+  // Sem o contêiner do deck não há o que montar: avisa em vez de quebrar mais adiante.
+  if (!deck) {
+    console.error('sistema.js: o deck precisa de um <main class="deck"> envolvendo os slides.');
+    return;
+  }
   var slides = Array.prototype.slice.call(deck.querySelectorAll('.slide'));
   var stage = window.matchMedia('(min-aspect-ratio:1001/1000) and (min-width:701px)');
   var current = 0;
