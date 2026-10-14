@@ -12,7 +12,7 @@ copia o modelo e devolve um deck pronto para apresentar ou exportar.
 
 ```
 01 / um HTML          serve de slide 16:9 e de post 4:5
-02 / sem dependência  abre direto do disco, sem instalar nem compilar
+02 / sem dependência  abre direto do disco, sem instalar, compilar nem internet
 03 / uma fonte só     cada cor, componente e ícone mora em um único arquivo
 ```
 
@@ -50,10 +50,23 @@ node ferramentas/verificar.mjs decks/meu-deck.html
 # exportar um PNG por slide
 node ferramentas/exportar.mjs decks/meu-deck.html
 node ferramentas/exportar.mjs decks/meu-deck.html --formato=post
+
+# juntar tudo em um HTML só, para enviar a alguém
+node ferramentas/empacotar.mjs decks/meu-deck.html
 ```
 
 As ferramentas pedem Node 18 ou mais novo e o Edge ou o Chrome instalado. Os decks em si não
 pedem nada.
+
+## Compartilhar
+
+| A pessoa vai | Envie |
+|---|---|
+| Ver com animação e navegar | O HTML único de `ferramentas/empacotar.mjs`; abre em qualquer navegador |
+| Só ler | PDF: `Ctrl+P` no deck, margens "Nenhuma", gráficos de plano de fundo ligados |
+| Postar | Os PNGs de `ferramentas/exportar.mjs` |
+
+O HTML único leva as fontes embutidas e funciona sem internet.
 
 ## Estático ou animado
 
@@ -73,7 +86,8 @@ conclusão. Imagens e PDF mostram sempre o slide pronto.
 ```
 sistema.css        ponto de entrada do estilo
 sistema.js         moldura, navegação, ícones e passos
-css/               tokens, base, componentes, formatos e animação
+css/               fontes, tokens, base, componentes, formatos e animação
+fonts/             Geist e Geist Mono (licença OFL)
 icons/             74 ícones em pixel; icons.json é a fonte
 decks/             os decks; modelo-base.html é o catálogo
 ferramentas/       exportar e verificar

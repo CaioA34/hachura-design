@@ -11,6 +11,7 @@ AGENTS.md                 este arquivo
 sistema.css               ponto de entrada do estilo: só @import, na ordem certa
 sistema.js                comportamento: moldura, navegação, ícones, grade de células, passos
 css/
+  fontes.css              @font-face de Geist e Geist Mono, apontando para fonts/
   tokens.css              cores, fontes, unidades, velocidade das animações
   base.css                palco, moldura do slide e peças comuns (.label .card .px .hatch)
   componentes/
@@ -21,6 +22,7 @@ css/
     desenho.css           diagrama livre em SVG
   formatos.css            post 4:5, tela estreita, ?solo e PDF
   animacao.css            animações de entrada e passos por clique
+fonts/                    arquivos das fontes (woff2) e a licença OFL
 icons/
   icons.json              fonte da verdade dos 74 ícones (grade 11×11)
   build.mjs               valida e gera svg/, sprite.svg, preview.html e icons.js
@@ -32,6 +34,7 @@ README.md                 apresentação do repositório para pessoas
 docs/readme/              imagens do README, exportadas dos decks
 ferramentas/
   exportar.mjs            um PNG por slide
+  empacotar.mjs           deck em um arquivo HTML único, para enviar a alguém
   verificar.mjs           testes automáticos de um deck
   navegador.mjs           código comum das duas ferramentas
 export/                   saída do exportar (fora do git)
@@ -42,7 +45,8 @@ export/                   saída do exportar (fora do git)
 
 - Um deck é um HTML em `decks/` que carrega três arquivos: `../sistema.css`, `../icons/icons.js`
   e `../sistema.js`. Ele só contém conteúdo; nenhum estilo ou script próprio.
-- `sistema.css` importa os módulos nesta ordem: tokens, base, componentes, formatos, animação.
+- `sistema.css` importa os módulos nesta ordem: fontes, tokens, base, componentes, formatos,
+  animação.
   Formatos vêm depois dos componentes porque ajustam o layout deles; animação vem por último.
 - Todo tamanho é múltiplo de `--u` e toda cor vem de `css/tokens.css`. Um componente nunca
   escreve cor ou pixel fixo.
@@ -81,6 +85,7 @@ Valores em `css/tokens.css`. Use sempre os mesmos:
 - Texto `#F2F2F2` (principal), `#A3A3A3` (secundário), `#6E6E6E` (apagado).
 - Destaque/solução `#8F8CFF`; problema/atenção `#FFB020`. Nenhuma outra cor.
 - Títulos em Geist, peso 700, letras apertadas. Rótulos, código e diagramas em Geist Mono.
+  As duas fontes estão em `fonts/`; um deck não carrega nada da internet.
 - Preenchimento de diagramas com hachura diagonal; nada de gradiente, sombra ou brilho.
 
 ## Como acrescentar
@@ -100,7 +105,11 @@ exemplo e escreva os seus. O guia de marcação está no comentário do topo do 
 **Um ícone.** Edite `icons/icons.json`, rode `node icons/build.mjs` e confira
 `icons/preview.html`. As regras de desenho estão em `icons/README.md`.
 
-**Uma cor, fonte ou medida.** Só em `css/tokens.css`. Cor nova precisa de significado próprio.
+**Uma cor ou medida.** Só em `css/tokens.css`. Cor nova precisa de significado próprio.
+
+**Uma fonte.** O arquivo `.woff2` entra em `fonts/` (com a licença, se ela exigir), o
+`@font-face` em `css/fontes.css` e o nome da família em `css/tokens.css`. Nunca um `<link>`
+para fonte externa dentro de um deck.
 
 **Uma animação.** Só em `css/animacao.css`, dentro do bloco de mídia que já existe, e só de
 entrada. Nunca dentro de um deck.
@@ -135,7 +144,7 @@ Todo commit segue o [Conventional Commits](https://www.conventionalcommits.org/p
 
 - **Tipos:** `feat` (algo novo), `fix` (correção), `docs`, `style` (formatação, sem mudar
   comportamento), `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
-- **Escopos usados aqui:** `tokens`, `base`, `componentes`, `formatos`, `animacao`, `js`,
+- **Escopos usados aqui:** `fontes`, `tokens`, `base`, `componentes`, `formatos`, `animacao`, `js`,
   `icons`, `decks`, `ferramentas`.
 - **Descrição:** em português, no imperativo, minúscula, sem ponto final
   (`feat(icons): adiciona ícone de impressora`).
@@ -155,5 +164,9 @@ O hook em `.githooks/commit-msg` recusa mensagens fora do padrão. Em um clone n
 node ferramentas/verificar.mjs decks/<nome>.html     navegação, ícones, proporção, transbordo
 node ferramentas/exportar.mjs decks/<nome>.html      um PNG por slide, para olhar
 ```
+
+Para enviar um deck a alguém sem o repositório, `node ferramentas/empacotar.mjs decks/<nome>.html`
+gera `export/<nome>.html`, um arquivo único com estilo, script e ícones embutidos. Nunca edite
+o arquivo empacotado: edite o deck e empacote de novo.
 
 Diga o que você conferiu de fato (rodou a verificação, olhou as imagens) e o que não conferiu.
