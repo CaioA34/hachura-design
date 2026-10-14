@@ -24,7 +24,7 @@
 }
 .steps li:first-child{border-top:0}
 .steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-weight:400;color:var(--text-3)}
-.steps .px{color:var(--text-2)}
+.steps .px:not(.t-accent):not(.t-alert){color:var(--text-2)}
 
 /* ---------- encerramento ---------- */
 .dot{color:var(--accent)}
