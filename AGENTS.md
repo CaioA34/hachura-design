@@ -32,6 +32,7 @@ decks/
   readme.html             capa do README (a imagem é exportada para docs/readme/)
 README.md                 apresentação do repositório para pessoas
 docs/readme/              imagens do README, exportadas dos decks
+docs/prompt-novo-deck.md  prompt pronto para uma pessoa pedir um deck a uma IA
 ferramentas/
   exportar.mjs            um PNG por slide
   empacotar.mjs           deck em um arquivo HTML único, para enviar a alguém
